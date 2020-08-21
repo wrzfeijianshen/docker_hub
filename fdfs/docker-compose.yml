@@ -1,0 +1,43 @@
+version: '2'
+services: 
+  fdfs_tracker:
+    image: phinexdaz/fdfs_tracker
+    container_name: fdfs_tracker
+    cap_add:
+        - LINUX_IMMUTABLE
+    ports:
+        - "22122:22122"
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./data/fastdfs/tracker:/data/tracker
+    hostname: fdfs_tracker
+    restart: always
+    environment:
+        - LANG=zh_CN.UTF-8
+    mem_limit: 2g
+    memswap_limit: 2g
+    stdin_open: true
+    tty: true
+  fdfs_storage:
+    image: phinexdaz/fdfs_storage
+    links:
+        - fdfs_tracker
+    container_name: fdfs_storage
+    cap_add:
+        - LINUX_IMMUTABLE
+    ports:
+        - "10080:80"
+        - "23000:23000"
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./data/fastdfs/storage:/data/storage
+          
+    hostname: fdfs_storage
+    restart: always
+    environment:
+        - LANG=zh_CN.UTF-8
+        - TRACKER=fdfs_tracker
+    mem_limit: 2g
+    memswap_limit: 2g
+    stdin_open: true
+    tty: true
